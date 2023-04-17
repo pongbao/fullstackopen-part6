@@ -2,16 +2,24 @@ import { useDispatch } from "react-redux";
 import { useMutation } from "react-query";
 
 import { appendAnecdote } from "../reducers/anecdoteReducer";
-import { setNotification } from "../reducers/notificationReducer";
 import { createAnecdote } from "../requests";
+import { useNotificationDispatch } from "../NotificationContext";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
+  const notificationDispatch = useNotificationDispatch();
 
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: (newAnecdote) => {
       dispatch(appendAnecdote(newAnecdote));
-      dispatch(setNotification(`you added "${newAnecdote.content}"`, 10));
+      notificationDispatch({
+        type: "ADD_ANECDOTE",
+        payload: newAnecdote.content,
+      });
+      setTimeout(
+        () => notificationDispatch({ type: "REMOVE_NOTIFICATION" }),
+        10000
+      );
     },
   });
 

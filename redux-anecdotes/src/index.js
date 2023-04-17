@@ -6,13 +6,16 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import App from "./App";
 
 import { store } from "./store";
+import { NotificationContextProvider } from "./NotificationContext";
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <NotificationContextProvider>
+        <App />
+      </NotificationContextProvider>
     </QueryClientProvider>
   </Provider>
 );

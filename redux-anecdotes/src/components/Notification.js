@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
+import { useNotificationMessage } from "../NotificationContext";
 
 const Notification = () => {
-  const notification = useSelector((state) => state.notification);
+  const notification = useNotificationMessage();
   const style = {
     border: "solid",
     padding: 10,
