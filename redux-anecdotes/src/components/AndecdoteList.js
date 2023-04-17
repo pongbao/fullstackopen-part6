@@ -1,7 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useMutation } from "react-query";
 
-import { addVote } from "../reducers/anecdoteReducer";
+import { increaseVote } from "../reducers/anecdoteReducer";
 import { setNotification } from "../reducers/notificationReducer";
+import { updateVotes } from "../requests";
 
 const AnecdoteList = () => {
   const anecdotes = useSelector((state) => {
@@ -15,17 +17,19 @@ const AnecdoteList = () => {
   });
   const dispatch = useDispatch();
 
-  const vote = (id, content) => {
-    dispatch(addVote(id));
-    dispatch(setNotification(`you voted "${content}"`, 10));
-  };
+  const updateVotesMutation = useMutation(updateVotes, {
+    onSuccess: (updatedAnecdote) => {
+      dispatch(increaseVote(updatedAnecdote.id));
+      dispatch(setNotification(`you voted "${updatedAnecdote.content}"`, 10));
+    },
+  });
 
   return anecdotes.map((anecdote) => (
     <div key={anecdote.id}>
       <div>{anecdote.content}</div>
       <div>
         has {anecdote.votes}
-        <button onClick={() => vote(anecdote.id, anecdote.content)}>
+        <button onClick={() => updateVotesMutation.mutate(anecdote.id)}>
           vote
         </button>
       </div>

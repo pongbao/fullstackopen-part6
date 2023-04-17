@@ -1,17 +1,25 @@
 import { useDispatch } from "react-redux";
+import { useMutation } from "react-query";
 
-import { createAnecdote } from "../reducers/anecdoteReducer";
+import { appendAnecdote } from "../reducers/anecdoteReducer";
 import { setNotification } from "../reducers/notificationReducer";
+import { createAnecdote } from "../requests";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
+
+  const newAnecdoteMutation = useMutation(createAnecdote, {
+    onSuccess: (newAnecdote) => {
+      dispatch(appendAnecdote(newAnecdote));
+      dispatch(setNotification(`you added "${newAnecdote.content}"`, 10));
+    },
+  });
 
   const addAnecdote = async (event) => {
     event.preventDefault();
     const content = event.target.anecdote.value;
     event.target.anecdote.value = "";
-    dispatch(createAnecdote(content));
-    dispatch(setNotification(`you added "${content}"`, 10));
+    newAnecdoteMutation.mutate({ content, votes: 0 });
   };
 
   return (
